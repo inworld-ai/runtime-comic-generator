@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 4-Panel Comic Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Comic Sans', cursive, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .header h1 {
+            font-family: 'Bangers', 'Comic Neue', 'Comic Sans MS', cursive;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
+            color: #ff6b6b;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 0px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .panel h2 {
+            font-family: 'Bangers', 'Comic Neue', 'Comic Sans MS', cursive;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        textarea, select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 0px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        textarea:focus, select:focus, input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 0px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 0px;
+            margin: 15px 0;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status.idle {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .status.pending {
+            background: #fef7e0;
+            color: #8b6914;
+            border: 2px solid #f7dc6f;
+        }
+
+        .status.generating_story {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 2px solid #90caf9;
+        }
+
+        .status.generating_images {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border: 2px solid #ce93d8;
+        }
+
+        .status.completed {
+            background: #e8f5e8;
+            color: #2d5a2d;
+            border: 2px solid #90ee90;
+        }
+
+        .status.error {
+            background: #fee;
+            color: #c33;
+            border: 2px solid #fcc;
+        }
+
+        .comic-display {
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comic-title {
+            font-family: 'Bangers', 'Comic Neue', 'Comic Sans MS', cursive;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 0px;
+            letter-spacing: 1px;
+        }
+
+        .comic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .comic-panel {
+            background: white;
+            border: 3px solid #333;
+            border-radius: 0px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+            transition: transform 0.2s;
+        }
+
+        .comic-panel:hover {
+            transform: scale(1.02);
+            z-index: 10;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .panel-image {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: #f8f9fa;
+        }
+
+        .panel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .panel-image img:hover {
+            transform: scale(1.05);
+        }
+
+        .panel-image.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .panel-text {
+            font-family: 'Comic Neue', 'Comic Sans MS', cursive;
+            background: white;
+            padding: 10px;
+            border-top: 2px solid #333;
+            font-weight: 700;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+
+        .panel-number {
+            position: relative;
+            z-index: 2;
+            top: 10px;
+            left: 10px;
+            background: #333;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .placeholder-content {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 100px;
+        }
+
+        .art-style-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .art-preset {
+            padding: 6px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 0px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .art-preset:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .recent-comics {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .recent-comic {
+            background: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 0px;
+            padding: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .comic-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 0px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .comic-status.pending { background: #fef7e0; color: #8b6914; }
+        .comic-status.generating_story { background: #e3f2fd; color: #1565c0; }
+        .comic-status.generating_images { background: #f3e5f5; color: #7b1fa2; }
+        .comic-status.completed { background: #d4edda; color: #155724; }
+        .comic-status.error { background: #f8d7da; color: #721c24; }
+
+        /* Modal for full-size viewing */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            cursor: pointer;
+        }
+
+        .modal img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 0px;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .comic-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 300px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 4-Panel Comic Generator</h1>
+            <p>Create AI-powered comics with two characters</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Creation Panel -->
+            <div class="panel">
+                <h2>🎭 Create Comic</h2>
+                
+                <div class="form-group">
+                    <label for="character1">Character 1 Description:</label>
+                    <textarea 
+                        id="character1" 
+                        placeholder="Describe the first character (appearance, personality, role)..."
+                        maxlength="500"
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="character2">Character 2 Description:</label>
+                    <textarea 
+                        id="character2" 
+                        placeholder="Describe the second character (appearance, personality, role)..."
+                        maxlength="500"
+                    ></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="artStyle">Art Style:</label>
+                    <input 
+                        type="text" 
+                        id="artStyle" 
+                        placeholder="e.g., cartoon style, anime, realistic"
+                        maxlength="200"
+                    >
+                    <div class="art-style-presets">
+                        <div class="art-preset" onclick="setArtStyle('anime style')">Anime</div>
+                        <div class="art-preset" onclick="setArtStyle('realistic style')">Realistic</div>
+                        <div class="art-preset" onclick="setArtStyle('noir black and white style')">Noir</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="theme">Theme/Setting (Optional):</label>
+                    <input 
+                        type="text" 
+                        id="theme" 
+                        placeholder="e.g., school, office, fantasy world, space..."
+                        maxlength="200"
+                    >
+                </div>
+
+                <button id="generateBtn" onclick="generateComic()">
+                    📚 Generate 4-Panel Comic
+                </button>
+
+                <div id="status" class="status idle">
+                    Ready to create your comic!
+                </div>
+
+                <div class="recent-comics">
+                    <h3 style="margin-bottom: 10px; color: #ff6b6b;">Recent Comics:</h3>
+                    <div id="recentComics"></div>
+                </div>
+            </div>
+
+            <!-- Comic Display Panel -->
+            <div class="panel comic-display">
+                <h2 id="comicHeader">🖼️ Your Comic</h2>
+                <div id="comicContent">
+                    <div class="placeholder-content">
+                        <h3>🎨 Create Your First Comic!</h3>
+                        <p>Fill in the character descriptions and art style, then click "Generate 4-Panel Comic" to create your unique story.</p>
+                        <br>
+                        <p><strong>Tips:</strong></p>
+                        <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
+                            <li>Be specific about character appearances</li>
+                            <li>Include personality traits</li>
+                            <li>Choose a clear art style</li>
+                            <li>Add a theme for more focused stories</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for full-size images -->
+    <div id="imageModal" class="modal" onclick="closeModal()">
+        <span class="close">&times;</span>
+        <img id="modalImage">
+    </div>
+
+    <script>
+        let currentRequestId = null;
+        let pollInterval = null;
+
+        // Set art style from preset
+        function setArtStyle(style) {
+            document.getElementById('artStyle').value = style;
+            
+            // Visual feedback
+            document.querySelectorAll('.art-preset').forEach(preset => {
+                preset.style.background = '';
+                preset.style.borderColor = '#e2e8f0';
+            });
+            event.target.style.background = '#fff5f5';
+            event.target.style.borderColor = '#ff6b6b';
+        }
+
+        // Generate comic
+        async function generateComic() {
+            const character1 = document.getElementById('character1').value.trim();
+            const character2 = document.getElementById('character2').value.trim();
+            const artStyle = document.getElementById('artStyle').value.trim();
+            const theme = document.getElementById('theme').value.trim();
+
+            // Validation
+            if (!character1) {
+                alert('Please describe Character 1');
+                return;
+            }
+            if (!character2) {
+                alert('Please describe Character 2');
+                return;
+            }
+            if (!artStyle) {
+                alert('Please specify an art style');
+                return;
+            }
+
+            try {
+                updateStatus('pending', 'Starting comic generation...');
+                document.getElementById('generateBtn').disabled = true;
+
+                const response = await fetch('/api/generate-comic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        character1Description: character1,
+                        character2Description: character2,
+                        artStyle: artStyle,
+                        theme: theme || undefined
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Comic generation failed');
+                }
+
+                currentRequestId = data.requestId;
+                startPolling();
+                loadRecentComics();
+
+            } catch (error) {
+                console.error('Comic generation error:', error);
+                updateStatus('error', `Error: ${error.message}`);
+                document.getElementById('generateBtn').disabled = false;
+            }
+        }
+
+        // Poll for status updates
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            
+            pollInterval = setInterval(async () => {
+                if (!currentRequestId) return;
+
+                try {
+                    const response = await fetch(`/api/comic-status/${currentRequestId}`);
+                    const data = await response.json();
+
+                    if (data.status === 'generating_story') {
+                        updateStatus('generating_story', '📝 Creating the story...');
+                    } else if (data.status === 'generating_images') {
+                        updateStatus('generating_images', '🎨 Generating 4 comic panels...');
+                    } else if (data.status === 'completed') {
+                        updateStatus('completed', '✅ Comic generated successfully!');
+                        displayComic(data.result);
+                        stopPolling();
+                    } else if (data.status === 'error') {
+                        updateStatus('error', `Generation failed: ${data.error}`);
+                        stopPolling();
+                    }
+                } catch (error) {
+                    console.error('Polling error:', error);
+                    updateStatus('error', 'Failed to check comic status');
+                    stopPolling();
+                }
+            }, 3000);
+        }
+
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+            document.getElementById('generateBtn').disabled = false;
+            currentRequestId = null;
+        }
+
+        function updateStatus(type, message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            
+            if (type.includes('generating')) {
+                statusEl.innerHTML = `<div class="loading-spinner"></div>${message}`;
+            } else {
+                statusEl.textContent = message;
+            }
+        }
+
+        function displayComic(comic) {
+            const content = document.getElementById('comicContent');
+            const header = document.getElementById('comicHeader');
+            
+            header.innerHTML = `🖼️ ${comic.title}`;
+            
+            content.innerHTML = `
+                <div class="comic-title">${comic.title}</div>
+                <div class="comic-grid">
+                    ${comic.panels.map(panel => `
+                        <div class="comic-panel">
+                            <div class="panel-number">${panel.panelNumber}</div>
+                            <div class="panel-image ${!panel.imageUrl ? 'loading' : ''}">
+                                ${panel.imageUrl ? 
+                                    `<img src="${panel.imageUrl}" alt="Panel ${panel.panelNumber}" onclick="openModal('${panel.imageUrl}')" loading="lazy">` :
+                                    'Image failed to load'
+                                }
+                            </div>
+                            <div class="panel-text">${panel.dialogueText}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 0px; font-size: 0.9rem; color: #666;">
+                    <strong>Art Style:</strong> ${comic.artStyle}
+                </div>
+            `;
+        }
+
+        function openModal(imageUrl) {
+            document.getElementById('modalImage').src = imageUrl;
+            document.getElementById('imageModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        async function loadRecentComics() {
+            try {
+                const response = await fetch('/api/recent-comics');
+                const comics = await response.json();
+                
+                const container = document.getElementById('recentComics');
+                container.innerHTML = comics.map(comic => `
+                    <div class="recent-comic">
+                        <span class="comic-status ${comic.status}">${comic.status}</span>
+                        <strong>Characters:</strong> ${comic.character1Description} & ${comic.character2Description}<br>
+                        <strong>Style:</strong> ${comic.artStyle}
+                        <div style="font-size: 0.8rem; color: #999; margin-top: 4px;">
+                            ${new Date(comic.createdAt).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('') || '<p style="color: #666; font-style: italic;">No recent comics</p>';
+                
+            } catch (error) {
+                console.error('Failed to load recent comics:', error);
+            }
+        }
+
+        // Load recent comics on page load
+        loadRecentComics();
+        setInterval(loadRecentComics, 60000); // Refresh every minute
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                generateComic();
+            }
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
