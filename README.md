@@ -10,7 +10,7 @@ MINIMAX_API_KEY=123
 INWORLD_API_KEY=456
 ```
 
-To properly install dependencies, navigate to the base directory and run `yarn`, followed by `yarn start`. 
+To properly install dependencies, navigate to the base directory and run `yarn`. Run `yarn start` to start the app.
 
 ## Architecture Overview
 
@@ -70,12 +70,6 @@ Handles the image generation for all 4 comic panels using the Minimax API.
 **Input**: `ComicStoryOutput` - Structured comic story data
 **Output**: `ComicImageOutput` - Comic with generated image URLs
 
-**Key Features**:
-- Parallel processing of all 4 panels
-- Retry logic with exponential backoff
-- Enhanced prompts for comic-style imagery
-- Error handling for individual panel failures
-
 ### 3. Response Parser Node
 
 Converts the LLM's JSON response into structured `ComicStoryOutput` format.
@@ -101,62 +95,6 @@ Generate a new 4-panel comic strip.
   "character2Description": "A wise old wizard with a long beard", 
   "artStyle": "anime manga style",
   "theme": "medieval adventure"
-}
-```
-
-**Response**:
-```json
-{
-  "requestId": "uuid",
-  "status": "pending",
-  "message": "Comic generation started"
-}
-```
-
-### Status Check
-
-**GET** `/api/comic-status/:requestId`
-
-Check the status of a comic generation request.
-
-**Response** (when completed):
-```json
-{
-  "requestId": "uuid",
-  "status": "completed", 
-  "result": {
-    "title": "The Knight and the Wizard",
-    "panels": [
-      {
-        "panelNumber": 1,
-        "dialogueText": "Hello, wise wizard!",
-        "visualDescription": "A knight approaches a wizard...",
-        "imageUrl": "https://generated-image-url.com/panel1.jpg"
-      }
-      // ... 3 more panels
-    ],
-    "artStyle": "anime manga style"
-  }
-}
-```
-
-### Recent Comics
-
-**GET** `/api/recent-comics`
-
-List the 10 most recent comic generation requests.
-
-## Graph Architecture (Inworld Runtime v0.5.0)
-
-The application uses the latest Inworld Runtime patterns:
-
-### Custom Node Pattern
-```typescript
-class CustomComicNode extends CustomNode {
-  process(context: ProcessContext, input: InputType): OutputType {
-    // Processing logic
-    return output;
-  }
 }
 ```
 
