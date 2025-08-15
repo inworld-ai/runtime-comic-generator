@@ -9,8 +9,9 @@ To use the Inworld Runtime and the Minimax API, you'll need to populate a `.env`
 MINIMAX_API_KEY=123
 INWORLD_API_KEY=456
 ```
+You can request a Minimax API key [here](https://www.minimax.io/platform/user-center/basic-information/interface-key) and an Inworld API key [here](https://docs.inworld.ai/docs/node/authentication#runtime-api-key).
 
-To properly install dependencies, navigate to the base directory and run `yarn`. Run `yarn start` to start the app.
+To properly install dependencies, navigate to the base directory and run `yarn`. Run `yarn start` to start the app, and open your browser and navigate to http://localhost:3003 to access the comic generation interface.
 
 ## Architecture Overview
 
@@ -42,7 +43,7 @@ image_generator/
 
 ## Core Components
 
-### 1. Comic Story Generator Node (`comic_story_node.ts`)
+### Comic Story Generator Node (`comic_story_node.ts`)
 
 Custom node that extends `CustomNode` to create structured prompts for comic generation.
 
@@ -63,14 +64,14 @@ interface ComicStoryInput {
 - Includes specific JSON formatting requirements
 - Provides guidelines for visual descriptions and dialogue
 
-### 2. Comic Image Generator Node (`comic_image_node.ts`)
+### Comic Image Generator Node (`comic_image_node.ts`)
 
 Handles the image generation for all 4 comic panels using the Minimax API.
 
 **Input**: `ComicStoryOutput` - Structured comic story data
 **Output**: `ComicImageOutput` - Comic with generated image URLs
 
-### 3. Response Parser Node
+### Response Parser Node
 
 Converts the LLM's JSON response into structured `ComicStoryOutput` format.
 
@@ -79,24 +80,6 @@ Converts the LLM's JSON response into structured `ComicStoryOutput` format.
 - Validates panel structure and count
 - Provides fallback error comic for parsing failures
 - Ensures consistent panel numbering
-
-## API Endpoints
-
-### Comic Generation
-
-**POST** `/api/generate-comic`
-
-Generate a new 4-panel comic strip.
-
-**Request Body**:
-```json
-{
-  "character1Description": "A brave knight with a shiny sword",
-  "character2Description": "A wise old wizard with a long beard", 
-  "artStyle": "anime manga style",
-  "theme": "medieval adventure"
-}
-```
 
 ### Graph Construction
 ```typescript
