@@ -14,7 +14,7 @@ To properly install dependencies, navigate to the base directory and run `yarn`,
 
 ## Architecture Overview
 
-The comic generator uses the Inworld Runtime SDK (v0.5.0) to create a graph-based processing pipeline that transforms user input into complete comics through multiple AI processing stages.
+The comic generator uses the Inworld Runtime SDK to create a graph-based processing pipeline that transforms user input into complete comics through multiple AI processing stages.
 
 ### Processing Pipeline
 
