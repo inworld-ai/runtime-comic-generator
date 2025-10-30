@@ -218,19 +218,19 @@ async function generateComic(request: ComicRequest) {
     };
 
     const executionId = uuidv4();
-    const outputStream = await comicGeneratorGraph!.start(input, executionId);
+    const executionResult = await comicGeneratorGraph!.start(input, { executionId });
     
     request.status = 'generating_images';
     console.log('🎨 Generating comic images...');
     
-    for await (const result of outputStream) {
+    for await (const result of executionResult.outputStream) {
       request.result = result.data as ComicImageOutput;
       request.status = 'completed';
       console.log(`✅ Comic generation completed for request ${request.id}`);
       break;
     }
 
-    comicGeneratorGraph!.closeExecution(outputStream);
+    comicGeneratorGraph!.closeExecution(executionResult.outputStream);
 
     if (request.status !== 'completed') {
       throw new Error('No valid result received from graph execution');
