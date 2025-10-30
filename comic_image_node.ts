@@ -64,13 +64,17 @@ export class ComicImageGeneratorNode extends CustomNode {
               timeout: timeoutMs,
             });
 
-            if (!response.data || !response.data.data || !response.data.data.image_urls) {
-              throw new Error(`Invalid response from Minimax API for panel ${panel.panelNumber}`);
+            if (!response.data || !response.data.base_resp) {
+              throw new Error(`Invalid response from MiniMax API`);
+            }
+
+            if(!response.data.data || !response.data.data.image_urls) {
+              throw new Error(`No images received from MiniMax API. Status Code: ${response.data.base_resp.status_code}, Status Message: ${response.data.base_resp.status_msg}`);
             }
 
             const imageUrl = response.data.data.image_urls[0];
             if (!imageUrl) {
-              throw new Error(`No image URL received for panel ${panel.panelNumber}`);
+              throw new Error(`No image URL received from MiniMax API. Status Code: ${response.data.base_resp.status_code}, Status Message: ${response.data.base_resp.status_msg}`);
             }
 
             console.log(`✅ Generated image for panel ${panel.panelNumber}`);
