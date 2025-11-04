@@ -159,7 +159,7 @@
     fastify "^5.2.0"
     protobufjs "^7.4.0"
 
-"@inworld/runtime@^0.6.0":
+"@inworld/runtime@^0.6.4":
   version "0.6.4"
   resolved "https://registry.yarnpkg.com/@inworld/runtime/-/runtime-0.6.4.tgz#23bfd44d202f9a11126e81a6c1934e451a23b140"
   integrity sha512-VLLKTNL4nv4qAG7m/+4H0NlFXVxIOajd1oWN8aJtvRNuYqO/QI6naNaXrGy0fYp+0xcKVUGNAR+q6nu1W8z8Uw==
