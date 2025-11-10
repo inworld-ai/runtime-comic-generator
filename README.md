@@ -20,7 +20,7 @@ cd comic-generator-node
 ### Step 2: Install Dependencies
 
 ```bash
-yarn install
+npm install
 ```
 
 ### Step 3: Configure Environment Variables
@@ -37,7 +37,7 @@ You can request a Minimax API key [here](https://www.minimax.io/platform/user-ce
 ### Step 4: Run the Application
 
 ```bash
-yarn start
+npm start
 ```
 
 Open your browser and navigate to http://localhost:3003 to access the comic generation interface.
