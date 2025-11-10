@@ -11,7 +11,7 @@ INWORLD_API_KEY=456
 ```
 You can request a Minimax API key [here](https://www.minimax.io/platform/user-center/basic-information/interface-key) and an Inworld API key [here](https://docs.inworld.ai/docs/node/authentication#runtime-api-key).
 
-To properly install dependencies, navigate to the base directory and run `yarn`. Run `yarn start` to start the app, and open your browser and navigate to http://localhost:3003 to access the comic generation interface.
+To properly install dependencies, navigate to the base directory and run `npm install`. Run `npm start` to start the app, and open your browser and navigate to http://localhost:3003 to access the comic generation interface.
 
 ## Architecture Overview
 
