@@ -3,12 +3,14 @@
 This app demonstrates four-panel-comic generation using the Inworld Runtime and the Minimax Image Generation API. [Check out our video](https://www.youtube.com/watch?v=QJufvjcC85c) for a walkthrough of this demo, our read through the [Developer Guide](https://github.com/inworld-ai/runtime-comic-generator/blob/main/DEVELOPER_GUIDE.md) in this repository.
 
 ## Local Development
+
 To use the Inworld Runtime and the Minimax API, you'll need to populate a `.env` file with a `MINIMAX_API_KEY` and an `INWORLD_API_KEY`. Example:
 
 ```
 MINIMAX_API_KEY=123
 INWORLD_API_KEY=456
 ```
+
 You can request a Minimax API key [here](https://www.minimax.io/platform/user-center/basic-information/interface-key) and an Inworld API key [here](https://docs.inworld.ai/docs/node/authentication#runtime-api-key).
 
 To properly install dependencies, navigate to the base directory and run `npm install`. Run `npm start` to start the app, and open your browser and navigate to http://localhost:3003 to access the comic generation interface.
@@ -48,6 +50,7 @@ image_generator/
 Custom node that extends `CustomNode` to create structured prompts for comic generation.
 
 **Input**: `ComicStoryInput`
+
 ```typescript
 interface ComicStoryInput {
   character1Description: string;
@@ -60,6 +63,7 @@ interface ComicStoryInput {
 **Output**: `GraphTypes.LLMChatRequest` - Formatted prompt for the LLM
 
 **Key Features**:
+
 - Generates detailed prompts that ensure 4-panel structure
 - Includes specific JSON formatting requirements
 - Provides guidelines for visual descriptions and dialogue
@@ -76,16 +80,18 @@ Handles the image generation for all 4 comic panels using the Minimax API.
 Converts the LLM's JSON response into structured `ComicStoryOutput` format.
 
 **Features**:
+
 - Cleans markdown formatting from LLM responses
 - Validates panel structure and count
 - Provides fallback error comic for parsing failures
 - Ensures consistent panel numbering
 
 ### Graph Construction
+
 ```typescript
-const graphBuilder = new GraphBuilder({ 
+const graphBuilder = new GraphBuilder({
   id: 'comic_generator',
-  apiKey: process.env.INWORLD_API_KEY!
+  apiKey: process.env.INWORLD_API_KEY!,
 });
 
 const executor = graphBuilder
@@ -98,6 +104,7 @@ const executor = graphBuilder
 ```
 
 ### Execution Pattern
+
 ```typescript
 const executionId = uuidv4();
 const outputStream = await executor.start(input, executionId);
@@ -111,7 +118,6 @@ for await (const result of outputStream) {
 
 executor.closeExecution(outputStream);
 ```
-
 
 ## License
 
