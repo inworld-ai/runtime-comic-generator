@@ -8,10 +8,14 @@ import {
   CustomNode,
   ProcessContext,
   RemoteLLMChatNode,
-  Graph
+  Graph,
 } from '@inworld/runtime/graph';
 import { GraphTypes } from '@inworld/runtime/common';
-import { ComicStoryGeneratorNode, parseComicStoryResponse, ComicStoryInput } from './comic_story_node';
+import {
+  ComicStoryGeneratorNode,
+  parseComicStoryResponse,
+  ComicStoryInput,
+} from './comic_story_node';
 import { ComicImageGeneratorNode, ComicImageOutput } from './comic_image_node';
 
 const app = express();
@@ -51,12 +55,12 @@ let comicGeneratorGraph: Graph | null = null;
 async function initializeGraph() {
   try {
     console.log('🔧 Initializing Comic Generator Graph...');
-    
-    const graphBuilder = new GraphBuilder({ 
+
+    const graphBuilder = new GraphBuilder({
       id: 'comic_generator',
-      apiKey: process.env.INWORLD_API_KEY!
+      apiKey: process.env.INWORLD_API_KEY!,
     });
-    
+
     // Create the nodes
     const storyGeneratorNode = new ComicStoryGeneratorNode();
 
@@ -87,7 +91,6 @@ async function initializeGraph() {
 
     comicGeneratorGraph = graphBuilder.build();
     console.log('✅ Comic Generator Graph initialized successfully');
-    
   } catch (error) {
     console.error('❌ Failed to initialize comic graph:', error);
     throw error;
@@ -102,19 +105,22 @@ app.get('/', (req, res) => {
 // Generate comic endpoint
 app.post('/api/generate-comic', async (req, res) => {
   try {
-    const { 
-      character1Description, 
-      character2Description, 
-      artStyle, 
-      theme 
-    } = req.body;
-    
+    const { character1Description, character2Description, artStyle, theme } = req.body;
+
     // Validation
-    if (!character1Description || typeof character1Description !== 'string' || character1Description.trim().length === 0) {
+    if (
+      !character1Description ||
+      typeof character1Description !== 'string' ||
+      character1Description.trim().length === 0
+    ) {
       return res.status(400).json({ error: 'Character 1 description is required' });
     }
 
-    if (!character2Description || typeof character2Description !== 'string' || character2Description.trim().length === 0) {
+    if (
+      !character2Description ||
+      typeof character2Description !== 'string' ||
+      character2Description.trim().length === 0
+    ) {
       return res.status(400).json({ error: 'Character 2 description is required' });
     }
 
@@ -146,24 +152,36 @@ app.post('/api/generate-comic', async (req, res) => {
     return res.json({
       requestId,
       status: 'pending',
-      message: 'Comic generation started'
+      message: 'Comic generation started',
     });
-
   } catch (error) {
     console.error('Comic generation request error:', error);
     return res.status(500).json({ error: 'Failed to start comic generation' });
   }
 });
 
+// Response interface for comic status endpoint
+interface ComicStatusResponse {
+  requestId: string;
+  status: ComicRequest['status'];
+  character1Description: string;
+  character2Description: string;
+  artStyle: string;
+  theme?: string;
+  createdAt: Date;
+  result?: ComicImageOutput;
+  error?: string;
+}
+
 // Get comic status endpoint
 app.get('/api/comic-status/:requestId', (req, res) => {
   const request = requests[req.params.requestId];
-  
+
   if (!request) {
     return res.status(404).json({ error: 'Request not found' });
   }
 
-  const response: any = {
+  const response: ComicStatusResponse = {
     requestId: request.id,
     status: request.status,
     character1Description: request.character1Description,
@@ -189,7 +207,7 @@ app.get('/api/recent-comics', (req, res) => {
   const recentRequests = Object.values(requests)
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 10)
-    .map(request => ({
+    .map((request) => ({
       requestId: request.id,
       status: request.status,
       character1Description: request.character1Description.substring(0, 50) + '...',
@@ -206,7 +224,7 @@ app.get('/api/recent-comics', (req, res) => {
 async function generateComic(request: ComicRequest) {
   try {
     console.log(`🎭 Starting comic generation for request ${request.id}`);
-    
+
     request.status = 'generating_story';
     console.log('📝 Generating comic story...');
 
@@ -219,10 +237,10 @@ async function generateComic(request: ComicRequest) {
 
     const executionId = uuidv4();
     const executionResult = await comicGeneratorGraph!.start(input, { executionId });
-    
+
     request.status = 'generating_images';
     console.log('🎨 Generating comic images...');
-    
+
     for await (const result of executionResult.outputStream) {
       request.result = result.data as ComicImageOutput;
       request.status = 'completed';
@@ -235,7 +253,6 @@ async function generateComic(request: ComicRequest) {
     if (request.status !== 'completed') {
       throw new Error('No valid result received from graph execution');
     }
-
   } catch (error) {
     console.error(`❌ Comic generation failed for request ${request.id}:`, error);
     request.status = 'error';
@@ -244,21 +261,24 @@ async function generateComic(request: ComicRequest) {
 }
 
 // Cleanup old requests (run every 2 hours)
-setInterval(() => {
-  const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-  let deletedCount = 0;
-  
-  for (const [id, request] of Object.entries(requests)) {
-    if (request.createdAt < twoHoursAgo) {
-      delete requests[id];
-      deletedCount++;
+setInterval(
+  () => {
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    let deletedCount = 0;
+
+    for (const [id, request] of Object.entries(requests)) {
+      if (request.createdAt < twoHoursAgo) {
+        delete requests[id];
+        deletedCount++;
+      }
     }
-  }
-  
-  if (deletedCount > 0) {
-    console.log(`🗑️  Cleaned up ${deletedCount} old comic requests`);
-  }
-}, 2 * 60 * 60 * 1000); // Every 2 hours
+
+    if (deletedCount > 0) {
+      console.log(`🗑️  Cleaned up ${deletedCount} old comic requests`);
+    }
+  },
+  2 * 60 * 60 * 1000
+); // Every 2 hours
 
 // Start server
 async function startServer() {
@@ -275,7 +295,7 @@ async function startServer() {
     }
 
     await initializeGraph();
-    
+
     app.listen(PORT, () => {
       console.log(`📚 Comic Generator running on http://localhost:${PORT}`);
       console.log(`📁 Serving static files from: ${path.join(__dirname, 'public')}`);

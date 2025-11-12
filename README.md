@@ -124,6 +124,7 @@ interface ComicStoryInput {
 **Output**: `GraphTypes.LLMChatRequest` - Formatted prompt for the LLM
 
 **Key Features**:
+
 - Generates detailed prompts that ensure 4-panel structure
 - Includes specific JSON formatting requirements
 - Provides guidelines for visual descriptions and dialogue
@@ -140,6 +141,7 @@ Handles the image generation for all 4 comic panels using the Minimax API.
 Converts the LLM's JSON response into structured `ComicStoryOutput` format.
 
 **Features**:
+
 - Cleans markdown formatting from LLM responses
 - Validates panel structure and count
 - Provides fallback error comic for parsing failures
