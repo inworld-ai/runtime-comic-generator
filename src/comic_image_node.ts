@@ -16,7 +16,7 @@ export interface ComicImageOutput {
 
 // Custom Comic Image Generation node
 export class ComicImageGeneratorNode extends CustomNode {
-  async process(context: ProcessContext, input: ComicStoryOutput): Promise<ComicImageOutput> {
+  async process(_context: ProcessContext, input: ComicStoryOutput): Promise<ComicImageOutput> {
     try {
       console.log(`🎨 Generating 4 comic panel images for: "${input.title}"`);
 

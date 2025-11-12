@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 3003;
 // Middleware
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static('public')); // Will serve comic UI
+app.use(express.static(path.join(__dirname, '../public'))); // Will serve comic UI
 
 // In-memory storage for comic generation requests
 interface ComicRequest {
@@ -43,7 +43,7 @@ const requests: { [key: string]: ComicRequest } = {};
 
 // Create a parser node to convert LLM response to ComicStoryOutput
 class ComicResponseParserNode extends CustomNode {
-  process(context: ProcessContext, input: GraphTypes.Content) {
+  process(_context: ProcessContext, input: GraphTypes.Content) {
     console.log('🔄 Parsing LLM response for comic story...');
     return parseComicStoryResponse(input.content);
   }
@@ -98,8 +98,8 @@ async function initializeGraph() {
 }
 
 // Routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'comic.html'));
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
 
 // Generate comic endpoint
@@ -203,7 +203,7 @@ app.get('/api/comic-status/:requestId', (req, res) => {
 });
 
 // List recent comic requests endpoint
-app.get('/api/recent-comics', (req, res) => {
+app.get('/api/recent-comics', (_req, res) => {
   const recentRequests = Object.values(requests)
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 10)

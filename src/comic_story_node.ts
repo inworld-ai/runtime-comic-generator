@@ -24,7 +24,7 @@ export interface ComicStoryOutput {
 
 // Custom Comic Story Generation node
 export class ComicStoryGeneratorNode extends CustomNode {
-  process(context: ProcessContext, input: ComicStoryInput): GraphTypes.LLMChatRequest {
+  process(_context: ProcessContext, input: ComicStoryInput): GraphTypes.LLMChatRequest {
     console.log(
       `📝 Generating comic story for characters: "${input.character1Description}" and "${input.character2Description}"`
     );
