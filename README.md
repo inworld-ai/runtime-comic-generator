@@ -154,6 +154,12 @@ for await (const result of outputStream) {
 executor.closeExecution(outputStream);
 ```
 
+## Troubleshooting
+
+**Bug Reports**: [GitHub Issues](https://github.com/inworld/comic-generator/issues)
+
+**General Questions**: For general inquiries and support, please email us at support@inworld.ai
+
 ## Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
