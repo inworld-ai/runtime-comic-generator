@@ -17,18 +17,21 @@ Thank you for your interest in contributing to the Comic Generator! This documen
 1. **Fork the repository** on GitHub
 
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/comic-generator.git
    cd comic-generator
    ```
 
 3. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 4. **Set up environment variables**:
    Create a `.env` file in the root directory:
+
    ```bash
    INWORLD_API_KEY=your_api_key_here
    MINIMAX_API_KEY=your_minimax_api_key
@@ -46,6 +49,7 @@ Thank you for your interest in contributing to the Comic Generator! This documen
 ### Making Changes
 
 1. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
@@ -55,6 +59,7 @@ Thank you for your interest in contributing to the Comic Generator! This documen
 2. **Make your changes** and test them locally
 
 3. **Run code quality checks** before committing:
+
    ```bash
    npm run lint          # Check for linting errors
    npm run lint:fix      # Auto-fix linting issues
@@ -65,6 +70,7 @@ Thank you for your interest in contributing to the Comic Generator! This documen
    ```
 
 4. **Commit your changes**:
+
    ```bash
    git add .
    git commit -m "Your descriptive commit message"
@@ -107,6 +113,7 @@ src/
 ## Pull Request Process
 
 1. **Update your fork**:
+
    ```bash
    git checkout main
    git pull upstream main
@@ -160,4 +167,3 @@ For feature requests, please include:
 ## License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
-
