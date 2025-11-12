@@ -1,6 +1,6 @@
 # Inworld Runtime Template using Minimax API
 
-This app demonstrates four-panel-comic generation using the Inworld Runtime and the Minimax Image Generation API. [Check out our video](https://www.youtube.com/watch?v=QJufvjcC85c) for a walkthrough of this demo, or read through the [Developer Guide](https://github.com/inworld-ai/runtime-comic-generator/blob/main/DEVELOPER_GUIDE.md) in this repository.
+This app demonstrates four-panel-comic generation using the Inworld Runtime and the Minimax Image Generation API. [Check out our video](https://www.youtube.com/watch?v=QJufvjcC85c) for a walkthrough of this demo.
 
 ## Local Development
 
