@@ -16,7 +16,10 @@ export interface ComicImageOutput {
 
 // Custom Comic Image Generation node
 export class ComicImageGeneratorNode extends CustomNode {
-  async process(_context: ProcessContext, input: ComicStoryOutput): Promise<ComicImageOutput> {
+  async process(
+    _context: ProcessContext,
+    input: ComicStoryOutput
+  ): Promise<ComicImageOutput> {
     try {
       console.log(`🎨 Generating 4 comic panel images for: "${input.title}"`);
 
@@ -33,7 +36,9 @@ export class ComicImageGeneratorNode extends CustomNode {
 
       // Generate all panel images in parallel
       const imagePromises = input.panels.map(async (panel) => {
-        console.log(`🖼️  Starting image generation for panel ${panel.panelNumber}...`);
+        console.log(
+          `🖼️  Starting image generation for panel ${panel.panelNumber}...`
+        );
 
         // Enhanced prompt for comic-style image generation
         const enhancedPrompt = `${panel.visualDescription}, ${input.artStyle}, clean composition`;
@@ -54,7 +59,9 @@ export class ComicImageGeneratorNode extends CustomNode {
         while (attempt < maxRetries) {
           try {
             const timeoutMs = 120000; // 2 minutes
-            console.log(`🔄 Attempt ${attempt + 1}/${maxRetries} for panel ${panel.panelNumber}`);
+            console.log(
+              `🔄 Attempt ${attempt + 1}/${maxRetries} for panel ${panel.panelNumber}`
+            );
 
             const response = await axios.post(url, payload, {
               headers,
@@ -94,7 +101,9 @@ export class ComicImageGeneratorNode extends CustomNode {
             );
 
             if (attempt >= maxRetries) {
-              console.error(`❌ All ${maxRetries} attempts failed for panel ${panel.panelNumber}`);
+              console.error(
+                `❌ All ${maxRetries} attempts failed for panel ${panel.panelNumber}`
+              );
               break;
             } else {
               // Wait before retry with exponential backoff

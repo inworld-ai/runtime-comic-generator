@@ -33,7 +33,12 @@ interface ComicRequest {
   character2Description: string;
   artStyle: string;
   theme?: string;
-  status: 'pending' | 'generating_story' | 'generating_images' | 'completed' | 'error';
+  status:
+    | 'pending'
+    | 'generating_story'
+    | 'generating_images'
+    | 'completed'
+    | 'error';
   result?: ComicImageOutput;
   error?: string;
   createdAt: Date;
@@ -105,7 +110,8 @@ app.get('/', (_req, res) => {
 // Generate comic endpoint
 app.post('/api/generate-comic', async (req, res) => {
   try {
-    const { character1Description, character2Description, artStyle, theme } = req.body;
+    const { character1Description, character2Description, artStyle, theme } =
+      req.body;
 
     // Validation
     if (
@@ -113,7 +119,9 @@ app.post('/api/generate-comic', async (req, res) => {
       typeof character1Description !== 'string' ||
       character1Description.trim().length === 0
     ) {
-      return res.status(400).json({ error: 'Character 1 description is required' });
+      return res
+        .status(400)
+        .json({ error: 'Character 1 description is required' });
     }
 
     if (
@@ -121,15 +129,23 @@ app.post('/api/generate-comic', async (req, res) => {
       typeof character2Description !== 'string' ||
       character2Description.trim().length === 0
     ) {
-      return res.status(400).json({ error: 'Character 2 description is required' });
+      return res
+        .status(400)
+        .json({ error: 'Character 2 description is required' });
     }
 
-    if (!artStyle || typeof artStyle !== 'string' || artStyle.trim().length === 0) {
+    if (
+      !artStyle ||
+      typeof artStyle !== 'string' ||
+      artStyle.trim().length === 0
+    ) {
       return res.status(400).json({ error: 'Art style is required' });
     }
 
     if (!comicGeneratorGraph) {
-      return res.status(500).json({ error: 'Comic generator is not initialized' });
+      return res
+        .status(500)
+        .json({ error: 'Comic generator is not initialized' });
     }
 
     // Create request
@@ -210,8 +226,10 @@ app.get('/api/recent-comics', (_req, res) => {
     .map((request) => ({
       requestId: request.id,
       status: request.status,
-      character1Description: request.character1Description.substring(0, 50) + '...',
-      character2Description: request.character2Description.substring(0, 50) + '...',
+      character1Description:
+        request.character1Description.substring(0, 50) + '...',
+      character2Description:
+        request.character2Description.substring(0, 50) + '...',
       artStyle: request.artStyle,
       createdAt: request.createdAt,
       hasResult: !!request.result,
@@ -236,7 +254,9 @@ async function generateComic(request: ComicRequest) {
     };
 
     const executionId = uuidv4();
-    const executionResult = await comicGeneratorGraph!.start(input, { executionId });
+    const executionResult = await comicGeneratorGraph!.start(input, {
+      executionId,
+    });
 
     request.status = 'generating_images';
     console.log('🎨 Generating comic images...');
@@ -254,9 +274,13 @@ async function generateComic(request: ComicRequest) {
       throw new Error('No valid result received from graph execution');
     }
   } catch (error) {
-    console.error(`❌ Comic generation failed for request ${request.id}:`, error);
+    console.error(
+      `❌ Comic generation failed for request ${request.id}:`,
+      error
+    );
     request.status = 'error';
-    request.error = error instanceof Error ? error.message : 'Unknown error occurred';
+    request.error =
+      error instanceof Error ? error.message : 'Unknown error occurred';
   }
 }
 
@@ -298,7 +322,9 @@ async function startServer() {
 
     app.listen(PORT, () => {
       console.log(`📚 Comic Generator running on http://localhost:${PORT}`);
-      console.log(`📁 Serving static files from: ${path.join(__dirname, 'public')}`);
+      console.log(
+        `📁 Serving static files from: ${path.join(__dirname, 'public')}`
+      );
       console.log(`🎭 Ready to create 4-panel comics!`);
     });
   } catch (error) {

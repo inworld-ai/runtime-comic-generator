@@ -14,33 +14,37 @@ This app demonstrates four-panel-comic generation using the Inworld Runtime and 
 ### Setup
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Configure environment variables**:
-   
+
    Create a `.env` file in the root directory:
+
    ```
    MINIMAX_API_KEY=your_minimax_api_key
    INWORLD_API_KEY=your_inworld_api_key
    ```
-   
+
    You can request a Minimax API key [here](https://www.minimax.io/platform/user-center/basic-information/interface-key) and an Inworld API key [here](https://docs.inworld.ai/docs/node/authentication#runtime-api-key).
 
 3. **Run the application**:
-   
+
    **For development** (with auto-reload on file changes):
+
    ```bash
    npm run dev
    ```
-   
+
    **For production**:
+
    ```bash
    npm run build
    npm start
    ```
-   
+
    Then open your browser and navigate to http://localhost:3003 to access the comic generation interface.
 
 ## Architecture Overview

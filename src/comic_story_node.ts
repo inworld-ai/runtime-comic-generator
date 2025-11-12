@@ -24,7 +24,10 @@ export interface ComicStoryOutput {
 
 // Custom Comic Story Generation node
 export class ComicStoryGeneratorNode extends CustomNode {
-  process(_context: ProcessContext, input: ComicStoryInput): GraphTypes.LLMChatRequest {
+  process(
+    _context: ProcessContext,
+    input: ComicStoryInput
+  ): GraphTypes.LLMChatRequest {
     console.log(
       `📝 Generating comic story for characters: "${input.character1Description}" and "${input.character2Description}"`
     );
@@ -80,9 +83,13 @@ export function parseComicStoryResponse(llmResponse: string): ComicStoryOutput {
 
     // Remove markdown code blocks if present
     if (cleanResponse.startsWith('```json')) {
-      cleanResponse = cleanResponse.replace(/```json\s*/, '').replace(/```\s*$/, '');
+      cleanResponse = cleanResponse
+        .replace(/```json\s*/, '')
+        .replace(/```\s*$/, '');
     } else if (cleanResponse.startsWith('```')) {
-      cleanResponse = cleanResponse.replace(/```\s*/, '').replace(/```\s*$/, '');
+      cleanResponse = cleanResponse
+        .replace(/```\s*/, '')
+        .replace(/```\s*$/, '');
     }
 
     const parsed = JSON.parse(cleanResponse);
@@ -116,7 +123,9 @@ export function parseComicStoryResponse(llmResponse: string): ComicStoryOutput {
       title: parsed.title || 'Untitled Comic',
     };
 
-    console.log(`✅ Successfully parsed comic story with ${result.panels.length} panels`);
+    console.log(
+      `✅ Successfully parsed comic story with ${result.panels.length} panels`
+    );
     return result;
   } catch (error) {
     console.error('❌ Failed to parse comic story response:', error);
@@ -134,17 +143,20 @@ export function parseComicStoryResponse(llmResponse: string): ComicStoryOutput {
         {
           panelNumber: 2,
           dialogueText: 'Please try again',
-          visualDescription: 'A character looking confused, drawn in comic book style',
+          visualDescription:
+            'A character looking confused, drawn in comic book style',
         },
         {
           panelNumber: 3,
           dialogueText: 'Check your input',
-          visualDescription: 'A character pointing at the viewer, drawn in comic book style',
+          visualDescription:
+            'A character pointing at the viewer, drawn in comic book style',
         },
         {
           panelNumber: 4,
           dialogueText: 'Thank you!',
-          visualDescription: 'A character waving goodbye, drawn in comic book style',
+          visualDescription:
+            'A character waving goodbye, drawn in comic book style',
         },
       ],
       artStyle: 'comic book style',
