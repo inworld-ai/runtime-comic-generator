@@ -1,62 +1,53 @@
-# Comic Generator
+# Inworld Runtime Template using Minimax API
 
-This app demonstrates four-panel-comic generation using Inworld AI Runtime and the Minimax Image Generation API. [Check out our video](https://www.youtube.com/watch?v=QJufvjcC85c) for a walkthrough of this demo, or read through the [Developer Guide](https://github.com/inworld-ai/comic-generator-node/blob/main/DEVELOPER_GUIDE.md) in this repository.
+This app demonstrates four-panel-comic generation using the Inworld Runtime and the Minimax Image Generation API. [Check out our video](https://www.youtube.com/watch?v=QJufvjcC85c) for a walkthrough of this demo.
 
-## Prerequisites
+## Local Development
+
+### Prerequisites
 
 - Node.js (v18 or higher)
+- npm
 - An Inworld AI account and API key
-- A Minimax API key for image generation
+- A Minimax API key
 
-## Get Started
+### Setup
 
-### Step 1: Clone the Repository
+1. **Install dependencies**:
 
-```bash
-git clone https://github.com/inworld-ai/comic-generator-node
-cd comic-generator-node
-```
+   ```bash
+   npm install
+   ```
 
-### Step 2: Install Dependencies
+2. **Configure environment variables**:
 
-```bash
-npm install
-```
+   Create a `.env` file in the root directory:
 
-### Step 3: Configure Environment Variables
+   ```
+   MINIMAX_API_KEY=your_minimax_api_key
+   INWORLD_API_KEY=your_inworld_api_key
+   ```
 
-Create a `.env` file in the root directory:
+   You can request a Minimax API key [here](https://www.minimax.io/platform/user-center/basic-information/interface-key) and an Inworld API key [here](https://docs.inworld.ai/docs/node/authentication#runtime-api-key).
 
-```bash
-MINIMAX_API_KEY=your_minimax_api_key_here
-INWORLD_API_KEY=your_inworld_api_key_here
-```
+3. **Run the application**:
 
-You can request a Minimax API key [here](https://www.minimax.io/platform/user-center/basic-information/interface-key) and an Inworld API key from the [Inworld Portal](https://platform.inworld.ai/).
+   **For development** (with auto-reload on file changes):
 
-### Step 4: Run the Application
+   ```bash
+   npm run dev
+   ```
 
-```bash
-npm start
-```
+   **For production**:
 
-Open your browser and navigate to http://localhost:3003 to access the comic generation interface.
+   ```bash
+   npm run build
+   npm start
+   ```
 
-## Repo Structure
+   Then open your browser and navigate to http://localhost:3003 to access the comic generation interface.
 
-```
-comic-generator-node/
-├── comic_server.ts           # Main server with graph orchestration
-├── comic_story_node.ts       # Custom node for story prompt generation
-├── comic_image_node.ts       # Custom node for image generation via Minimax
-├── public/                   # Static assets
-│   └── index.html            # Web interface for testing
-├── package.json              # Dependencies and scripts
-├── tsconfig.json             # TypeScript configuration
-└── LICENSE                   # MIT License
-```
-
-## Architecture
+## Architecture Overview
 
 The comic generator uses the Inworld Runtime SDK to create a graph-based processing pipeline that transforms user input into complete comics through multiple AI processing stages.
 
@@ -71,37 +62,20 @@ User Input → Story Generator → LLM (Gemini) → Response Parser → Image Ge
 3. **Response Parser**: Converts LLM response into structured comic data
 4. **Image Generator**: Uses Minimax API to generate images for each panel
 
-### Graph Construction
+## Project Structure
 
-```typescript
-const graphBuilder = new GraphBuilder({ 
-  id: 'comic_generator',
-  apiKey: process.env.INWORLD_API_KEY!
-});
-
-const executor = graphBuilder
-  .addNode(node1)
-  .addNode(node2)
-  .addEdge(node1, node2)
-  .setStartNode(node1)
-  .setEndNode(node2)
-  .build();
 ```
-
-### Execution Pattern
-
-```typescript
-const executionId = uuidv4();
-const outputStream = await executor.start(input, executionId);
-
-for await (const result of outputStream) {
-  if (result.nodeId === 'target-node-id') {
-    // Handle result
-    break;
-  }
-}
-
-executor.closeExecution(outputStream);
+comic-generator/
+├── src/                      # Source code
+│   ├── index.ts              # Main server with graph orchestration
+│   ├── comic_story_node.ts   # Custom node for story prompt generation
+│   └── comic_image_node.ts  # Custom node for image generation via Minimax
+├── public/                   # Static assets (HTML UI)
+│   └── index.html            # Web interface for testing
+├── dist/                     # Compiled JavaScript (generated)
+├── package.json              # Dependencies and scripts
+├── tsconfig.json             # TypeScript configuration
+└── README.md                 # This file
 ```
 
 ## Core Components
@@ -147,20 +121,49 @@ Converts the LLM's JSON response into structured `ComicStoryOutput` format.
 - Provides fallback error comic for parsing failures
 - Ensures consistent panel numbering
 
+### Graph Construction
+
+```typescript
+const graphBuilder = new GraphBuilder({
+  id: 'comic_generator',
+  apiKey: process.env.INWORLD_API_KEY!,
+});
+
+const executor = graphBuilder
+  .addNode(node1)
+  .addNode(node2)
+  .addEdge(node1, node2)
+  .setStartNode(node1)
+  .setEndNode(node2)
+  .build();
+```
+
+### Execution Pattern
+
+```typescript
+const executionId = uuidv4();
+const outputStream = await executor.start(input, executionId);
+
+for await (const result of outputStream) {
+  if (result.nodeId === 'target-node-id') {
+    // Handle result
+    break;
+  }
+}
+
+executor.closeExecution(outputStream);
+```
+
 ## Troubleshooting
 
-**Bug Reports**: [GitHub Issues](https://github.com/inworld-ai/comic-generator-node/issues)
+**Bug Reports**: [GitHub Issues](https://github.com/inworld/comic-generator/issues)
 
 **General Questions**: For general inquiries and support, please email us at support@inworld.ai
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute to this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
