@@ -54,11 +54,11 @@ The comic generator uses the Inworld Runtime SDK to create a graph-based process
 ### Processing Pipeline
 
 ```
-User Input → Story Generator → LLM (Gemini) → Response Parser → Image Generator (Minimax) → Final Comic
+User Input → Story Generator → LLM (OpenAI) → Response Parser → Image Generator (Minimax) → Final Comic
 ```
 
 1. **Story Generator**: Creates structured prompts for the LLM
-2. **LLM Chat Node**: Uses Google Gemini to generate comic story with dialogue and visual descriptions
+2. **LLM Chat Node**: Uses OpenAI to generate comic story with dialogue and visual descriptions
 3. **Response Parser**: Converts LLM response into structured comic data
 4. **Image Generator**: Uses Minimax API to generate images for each panel
 
