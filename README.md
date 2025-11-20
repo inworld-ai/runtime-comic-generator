@@ -45,7 +45,7 @@ This app demonstrates four-panel-comic generation using the Inworld Runtime and 
    npm start
    ```
 
-   Then open your browser and navigate to http://localhost:3003 to access the comic generation interface.
+   Then open your browser and navigate to http://localhost:3000 to access the comic generation interface.
 
 ## Architecture Overview
 

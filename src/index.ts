@@ -11,6 +11,7 @@ import {
   Graph,
 } from '@inworld/runtime/graph';
 import { GraphTypes } from '@inworld/runtime/common';
+import { stopInworldRuntime } from '@inworld/runtime';
 import {
   ComicStoryGeneratorNode,
   parseComicStoryResponse,
@@ -268,8 +269,6 @@ async function generateComic(request: ComicRequest) {
       break;
     }
 
-    comicGeneratorGraph!.closeExecution(executionResult.outputStream);
-
     if (request.status !== 'completed') {
       throw new Error('No valid result received from graph execution');
     }
@@ -334,13 +333,15 @@ async function startServer() {
 }
 
 // Graceful shutdown
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('🛑 Shutting down comic server...');
-  if (comicGeneratorGraph) {
-    comicGeneratorGraph.stopExecutor();
-    comicGeneratorGraph.cleanupAllExecutions();
-    comicGeneratorGraph.destroy();
-  }
+  await stopInworldRuntime();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('🛑 Shutting down comic server...');
+  await stopInworldRuntime();
   process.exit(0);
 });
 
